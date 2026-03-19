@@ -1,0 +1,32 @@
+src
+ ┣ assets
+ ┃ ┣ hero.png
+ ┃ ┣ react.svg
+ ┃ ┗ vite.svg
+ ┣ components
+ ┃ ┣ feed
+ ┃ ┃ ┗ CardPost.tsx
+ ┃ ┣ layout
+ ┃ ┃ ┣ Footer.tsx
+ ┃ ┃ ┗ Header.tsx
+ ┃ ┣ FormularioCadastro.tsx
+ ┃ ┗ FormularioLogin.tsx
+ ┣ ContextAPI
+ ┃ ┗ ContextoLogado.tsx
+ ┣ hooks
+ ┃ ┣ useBusca.ts
+ ┃ ┣ useCardPost.ts
+ ┃ ┗ usePosts.ts
+ ┣ pages
+ ┃ ┣ FeedMiniTwitter.tsx
+ ┃ ┗ TelaAcesso.tsx
+ ┣ services
+ ┃ ┣ api.ts
+ ┃ ┣ autenticacao.ts
+ ┃ ┗ posts.ts
+ ┣ types
+ ┃ ┗ tipos.ts
+ ┣ App.css
+ ┣ App.tsx
+ ┣ index.css
+ ┗ main.tsx
