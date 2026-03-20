@@ -1,3 +1,7 @@
+// src/components/FormularioCadastro.tsx
+// Formulário de cadastro usando React Hook Form + Zod
+// POST http://localhost:3000/auth/register
+
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -44,38 +48,45 @@ export default function FormularioCadastro({ aoCadastrar }: Props) {
 
   return (
     <form onSubmit={handleSubmit(aoEnviar)} className="flex flex-col gap-4">
-      <h2 className="text-2xl font-bold text-white">Olá, vamos começar!</h2>
-      <p className="text-gray-400">Por favor, insira os dados solicitados para fazer cadastro.</p>
+      <h2 className="text-2xl font-bold transition-colors" style={{ color: 'var(--cor-texto)' }}>
+        Olá, vamos começar!
+      </h2>
+      <p className="transition-colors" style={{ color: 'var(--cor-texto-suave)' }}>
+        Por favor, insira os dados solicitados para fazer cadastro.
+      </p>
 
       <div className="flex flex-col gap-1">
-        <label className="text-white text-sm">Nome</label>
+        <label className="text-sm transition-colors" style={{ color: 'var(--cor-texto)' }}>Nome</label>
         <input
           {...register('nome')}
           type="text"
           placeholder="Insira o seu nome"
-          className="bg-[#1e2a3a] text-white rounded-lg px-4 py-3 outline-none border border-transparent focus:border-blue-500"
+          className="rounded-lg px-4 py-3 outline-none border border-transparent focus:border-blue-500 transition-colors"
+          style={{ backgroundColor: 'var(--cor-card)', color: 'var(--cor-texto)' }}
         />
         {errors.nome && <span className="text-red-500 text-sm">{errors.nome.message}</span>}
       </div>
 
       <div className="flex flex-col gap-1">
-        <label className="text-white text-sm">E-mail</label>
+        <label className="text-sm transition-colors" style={{ color: 'var(--cor-texto)' }}>E-mail</label>
         <input
           {...register('email')}
           type="email"
           placeholder="Insira o seu e-mail"
-          className="bg-[#1e2a3a] text-white rounded-lg px-4 py-3 outline-none border border-transparent focus:border-blue-500"
+          className="rounded-lg px-4 py-3 outline-none border border-transparent focus:border-blue-500 transition-colors"
+          style={{ backgroundColor: 'var(--cor-card)', color: 'var(--cor-texto)' }}
         />
         {errors.email && <span className="text-red-500 text-sm">{errors.email.message}</span>}
       </div>
 
       <div className="flex flex-col gap-1">
-        <label className="text-white text-sm">Senha</label>
+        <label className="text-sm transition-colors" style={{ color: 'var(--cor-texto)' }}>Senha</label>
         <input
           {...register('senha')}
           type="password"
           placeholder="Insira a sua senha"
-          className="bg-[#1e2a3a] text-white rounded-lg px-4 py-3 outline-none border border-transparent focus:border-blue-500"
+          className="rounded-lg px-4 py-3 outline-none border border-transparent focus:border-blue-500 transition-colors"
+          style={{ backgroundColor: 'var(--cor-card)', color: 'var(--cor-texto)' }}
         />
         {errors.senha && <span className="text-red-500 text-sm">{errors.senha.message}</span>}
       </div>
@@ -85,7 +96,7 @@ export default function FormularioCadastro({ aoCadastrar }: Props) {
       <button
         type="submit"
         disabled={isSubmitting}
-        className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 rounded-full transition-colors disabled:opacity-50"
+        className="bg-blue-500 hover:bg-blue-600 cursor-pointer text-white font-bold py-3 rounded-full transition-colors disabled:opacity-50"
       >
         {isSubmitting ? 'Cadastrando...' : 'Continuar'}
       </button>

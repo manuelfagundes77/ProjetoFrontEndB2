@@ -1,47 +1,62 @@
 // src/components/feed/FormularioCriarPost.tsx
-// Formulário para criar novos posts
+// Formulário para criar novos posts usando React Hook Form + Zod
 // POST http://localhost:3000/posts
 
 import { useState, useRef } from 'react'
+import { useForm } from 'react-hook-form'
+import { z } from 'zod'
+import { zodResolver } from '@hookform/resolvers/zod'
 import { useContextoLogado } from '../../ContextAPI/ContextoLogado'
 import { criarPost } from '../../services/posts'
 import { useNavigate } from 'react-router-dom'
+import axios from 'axios'
+
+const TAMANHO_MAXIMO_MB = 5
+
+const esquemaCriarPost = z.object({
+  titulo: z.string().min(3, 'Título deve ter no mínimo 3 caracteres'),
+  conteudo: z.string().min(1, 'Conteúdo é obrigatório'),
+})
+
+type DadosCriarPost = z.infer<typeof esquemaCriarPost>
 
 interface Props {
   aoPostar: () => void
 }
-
-const TAMANHO_MAXIMO_MB = 5
 
 export default function FormularioCriarPost({ aoPostar }: Props) {
   const { estaLogado } = useContextoLogado()
   const navigate = useNavigate()
   const inputArquivoRef = useRef<HTMLInputElement>(null)
 
-  const [titulo, setTitulo] = useState('')
-  const [conteudo, setConteudo] = useState('')
   const [imagemBase64, setImagemBase64] = useState('')
   const [previewImagem, setPreviewImagem] = useState('')
-  const [postando, setPostando] = useState(false)
-  const [erro, setErro] = useState('')
+  const [erroImagem, setErroImagem] = useState('')
+  const [erroAPI, setErroAPI] = useState('')
 
-  // Converte o arquivo para base64 e valida o tamanho
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors, isSubmitting },
+  } = useForm<DadosCriarPost>({
+    resolver: zodResolver(esquemaCriarPost),
+  })
+
   const aoSelecionarImagem = (e: React.ChangeEvent<HTMLInputElement>) => {
     const arquivo = e.target.files?.[0]
     if (!arquivo) return
-
     const tamanhoMB = arquivo.size / (1024 * 1024)
     if (tamanhoMB > TAMANHO_MAXIMO_MB) {
-      setErro(`A imagem deve ter no máximo ${TAMANHO_MAXIMO_MB}MB`)
+      setErroImagem(`A imagem deve ter no máximo ${TAMANHO_MAXIMO_MB}MB`)
       return
     }
-
     const leitor = new FileReader()
     leitor.onload = () => {
       const resultado = leitor.result as string
       setImagemBase64(resultado)
       setPreviewImagem(resultado)
-      setErro('')
+      setErroImagem('')
     }
     leitor.readAsDataURL(arquivo)
   }
@@ -52,68 +67,64 @@ export default function FormularioCriarPost({ aoPostar }: Props) {
     if (inputArquivoRef.current) inputArquivoRef.current.value = ''
   }
 
-  const aoClicarPostar = async () => {
+  const aoEnviar = async (dados: DadosCriarPost) => {
     if (!estaLogado) {
       const confirmar = confirm('Você precisa estar logado para postar. Deseja ir para o login?')
       if (confirmar) navigate('/')
       return
     }
-
-    if (!titulo.trim() || !conteudo.trim()) {
-      setErro('Título e conteúdo são obrigatórios')
-      return
-    }
-
-    setPostando(true)
-    setErro('')
-
+    setErroAPI('')
     try {
-      await criarPost(titulo, conteudo, imagemBase64 || undefined)
-      setTitulo('')
-      setConteudo('')
-      setImagemBase64('')
-      setPreviewImagem('')
-      if (inputArquivoRef.current) inputArquivoRef.current.value = ''
+      await criarPost(dados.titulo, dados.conteudo, imagemBase64 || undefined)
+      reset()
+      aoRemoverImagem()
       aoPostar()
-    } catch {
-      setErro('Erro ao criar post. Tente novamente.')
-    } finally {
-      setPostando(false)
+    } catch (erro) {
+      if (axios.isAxiosError(erro)) {
+        setErroAPI(erro.response?.data?.error || 'Erro ao criar post.')
+      } else {
+        setErroAPI('Erro ao criar post. Tente novamente.')
+      }
     }
   }
 
   return (
-    <div className="bg-[#1e2a3a] rounded-xl p-5 flex flex-col gap-3">
-
+    <form
+      onSubmit={handleSubmit(aoEnviar)}
+      className="rounded-xl p-5 flex flex-col gap-3 transition-colors duration-300"
+      style={{ backgroundColor: 'var(--cor-card)' }}
+      
+    >
       {/* Campo de título */}
       <input
-        value={titulo}
-        onChange={(e) => setTitulo(e.target.value)}
+        {...register('titulo')}
         placeholder="Título do post"
-        className="bg-transparent text-white outline-none placeholder-gray-500 font-semibold text-lg border-b border-gray-700 pb-2"
+        className="bg-transparent outline-none font-semibold text-lg pb-2 transition-colors"
+        style={{
+          color: 'var(--cor-texto)',
+          borderBottom: '1px solid var(--cor-borda)',
+        }}
       />
+      {errors.titulo && <span className="text-red-500 text-sm">{errors.titulo.message}</span>}
 
       {/* Campo de conteúdo */}
       <textarea
-        value={conteudo}
-        onChange={(e) => setConteudo(e.target.value)}
+        {...register('conteudo')}
         placeholder="E aí, o que está rolando?"
         rows={3}
-        className="bg-transparent text-white outline-none placeholder-gray-500 resize-none"
+        className="bg-transparent outline-none resize-none transition-colors"
+        style={{ color: 'var(--cor-texto)' }}
       />
+      {errors.conteudo && <span className="text-red-500 text-sm">{errors.conteudo.message}</span>}
 
-      {/* Preview da imagem selecionada */}
+      {/* Preview da imagem */}
       {previewImagem && (
         <div className="relative">
-          <img
-            src={previewImagem}
-            alt="preview"
-            className="rounded-lg w-full object-cover max-h-60"
-          />
+          <img src={previewImagem} alt="preview" className="rounded-lg w-full object-cover max-h-60" />
           <button
+            type="button"
             onClick={aoRemoverImagem}
             className="absolute top-2 right-2 bg-red-500 hover:bg-red-600 text-white rounded-full p-1 cursor-pointer"
-            title="Remover imagem"
           >
             <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -122,40 +133,32 @@ export default function FormularioCriarPost({ aoPostar }: Props) {
         </div>
       )}
 
-      {erro && <span className="text-red-500 text-sm">{erro}</span>}
+      {erroImagem && <span className="text-red-500 text-sm">{erroImagem}</span>}
+      {erroAPI && <span className="text-red-500 text-sm">{erroAPI}</span>}
 
-      {/* Rodapé do formulário */}
-      <div className="flex items-center justify-between pt-2 border-t border-gray-700">
-
-        {/* Input de arquivo escondido */}
-        <input
-          ref={inputArquivoRef}
-          type="file"
-          accept="image/*"
-          onChange={aoSelecionarImagem}
-          className="hidden"
-        />
-
-        {/* Ícone de imagem — abre o seletor de arquivo */}
+      {/* Rodapé */}
+      <div
+        className="flex items-center justify-between pt-2 transition-colors"
+        style={{ borderTop: '1px solid var(--cor-borda)' }}
+      >
+        <input ref={inputArquivoRef} type="file" accept="image/*" onChange={aoSelecionarImagem} className="hidden" />
         <button
+          type="button"
           onClick={() => inputArquivoRef.current?.click()}
           className="text-blue-400 cursor-pointer hover:text-blue-300 transition-colors"
-          title="Adicionar imagem (máx. 5MB)"
         >
           <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
           </svg>
         </button>
-
-        {/* Botão postar */}
         <button
-          onClick={aoClicarPostar}
-          disabled={postando}
+          type="submit"
+          disabled={isSubmitting}
           className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-full cursor-pointer transition-colors disabled:opacity-50"
         >
-          {postando ? 'Postando...' : 'Postar'}
+          {isSubmitting ? 'Postando...' : 'Postar'}
         </button>
       </div>
-    </div>
+    </form>
   )
 }

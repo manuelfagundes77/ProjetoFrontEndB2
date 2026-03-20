@@ -38,7 +38,7 @@ export function ProvedorLogado({ children }: { children: React.ReactNode }) {
   }
 
   return (
-    <ContextoLogado.Provider value={{ usuario, token, aoLogar, aoDeslogar, estaLogado: !!token }}>
+    <ContextoLogado.Provider value={{ usuario, token, aoLogar, aoDeslogar, estaLogado: token !== null }}>
       {children}
     </ContextoLogado.Provider>
   )

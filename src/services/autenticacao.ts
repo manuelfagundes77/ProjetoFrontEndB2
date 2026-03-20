@@ -15,14 +15,10 @@ export const cadastrar = async (nome: string, email: string, senha: string): Pro
 // Login de usuário
 export const login = async (email: string, senha: string): Promise<RespostaLogin> => {
   const { data } = await api.post('/auth/login', { email, password: senha })
-  localStorage.setItem('tokenMiniTwitter', data.token)
-  localStorage.setItem('usuarioMiniTwitter', JSON.stringify(data.user))
   return data
 }
 
 // Logout de usuário
 export const logout = async (): Promise<void> => {
   await api.post('/auth/logout')
-  localStorage.removeItem('tokenMiniTwitter')
-  localStorage.removeItem('usuarioMiniTwitter')
 }

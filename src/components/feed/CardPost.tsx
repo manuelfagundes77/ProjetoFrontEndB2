@@ -25,27 +25,29 @@ export default function CardPost({ post, aoAtualizar }: Props) {
 
   const eOAutor = usuario?.id === post.authorId
 
-  // Renderiza o formulário de edição inline
   const renderModoEdicao = () => (
     <div className="flex flex-col gap-3">
       <input
         value={tituloEdicao}
         onChange={(e) => setTituloEdicao(e.target.value)}
-        className="bg-[#0d1117] text-white rounded-lg px-4 py-2 outline-none border border-gray-700 focus:border-blue-500"
+        className="rounded-lg px-4 py-2 outline-none border focus:border-blue-500 transition-colors"
+        style={{ backgroundColor: 'var(--cor-input)', color: 'var(--cor-texto)', borderColor: 'var(--cor-borda)' }}
         placeholder="Título"
       />
       <textarea
         value={conteudoEdicao}
         onChange={(e) => setConteudoEdicao(e.target.value)}
         rows={3}
-        className="bg-[#0d1117] text-white rounded-lg px-4 py-2 outline-none border border-gray-700 focus:border-blue-500 resize-none"
+        className="rounded-lg px-4 py-2 outline-none border focus:border-blue-500 resize-none transition-colors"
+        style={{ backgroundColor: 'var(--cor-input)', color: 'var(--cor-texto)', borderColor: 'var(--cor-borda)' }}
         placeholder="Conteúdo"
       />
       {erroEdicao && <span className="text-red-500 text-sm">{erroEdicao}</span>}
       <div className="flex gap-2 justify-end">
         <button
           onClick={aoCancelarEdicao}
-          className="px-4 py-2 rounded-full text-gray-400 hover:text-white cursor-pointer transition-colors"
+          className="px-4 py-2 rounded-full cursor-pointer transition-colors"
+          style={{ color: 'var(--cor-texto-suave)' }}
         >
           Cancelar
         </button>
@@ -60,11 +62,14 @@ export default function CardPost({ post, aoAtualizar }: Props) {
     </div>
   )
 
-  // Renderiza o card normal de exibição
   const renderModoExibicao = () => (
     <>
-      <h2 className="text-white font-bold text-lg">{post.title}</h2>
-      <p className="text-gray-300">{post.content}</p>
+      <h2 className="font-bold text-lg transition-colors" style={{ color: 'var(--cor-texto)' }}>
+        {post.title}
+      </h2>
+      <p className="transition-colors" style={{ color: 'var(--cor-texto-suave)' }}>
+        {post.content}
+      </p>
       {post.image && (
         <img
           src={post.image}
@@ -76,19 +81,24 @@ export default function CardPost({ post, aoAtualizar }: Props) {
   )
 
   return (
-    <div className="bg-[#1e2a3a] rounded-xl p-5 flex flex-col gap-3">
-
-      {/* Cabeçalho: nome, @usuario, data e ícones de ação */}
+    <div
+      className="rounded-xl p-5 flex flex-col gap-3 transition-colors duration-300"
+      style={{ backgroundColor: 'var(--cor-card)' }}
+    >
+      {/* Cabeçalho */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <span className="text-white font-bold">{post.authorName}</span>
-          <span className="text-gray-400 text-sm">
+          <span className="font-bold transition-colors" style={{ color: 'var(--cor-texto)' }}>
+            {post.authorName}
+          </span>
+          <span className="text-sm transition-colors" style={{ color: 'var(--cor-texto-suave)' }}>
             @{post.authorName.toLowerCase().replace(' ', '')}
           </span>
-          <span className="text-gray-500 text-sm">· {formatarData(post.createdAt)}</span>
+          <span className="text-sm transition-colors" style={{ color: 'var(--cor-texto-muted)' }}>
+            · {formatarData(post.createdAt)}
+          </span>
         </div>
 
-        {/* Ícones de editar/deletar — só para o autor e fora do modo edição */}
         {eOAutor && !editando && (
           <div className="flex gap-3">
             <button
@@ -113,10 +123,9 @@ export default function CardPost({ post, aoAtualizar }: Props) {
         )}
       </div>
 
-      {/* Conteúdo — alterna entre modo edição e exibição */}
       {editando ? renderModoEdicao() : renderModoExibicao()}
 
-      {/* Botão de like — muda visual baseado no estado curtido */}
+      {/* Botão de like */}
       <button
         onClick={aoClicarLike}
         disabled={curtindo || !estaLogado}
@@ -124,7 +133,9 @@ export default function CardPost({ post, aoAtualizar }: Props) {
           curtido ? 'text-red-500' : 'text-gray-400'
         }`}
       >
-        {curtido ? '❤️' : '🤍'}
+        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill={curtido ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth={2}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+        </svg>
         <span className="text-sm">{contagemLikes}</span>
       </button>
     </div>

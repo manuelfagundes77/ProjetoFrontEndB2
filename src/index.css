@@ -1,1 +1,32 @@
+/* src/index.css */
 @import "tailwindcss";
+
+:root {
+  --cor-fundo: #0d1117;
+  --cor-card: #1e2a3a;
+  --cor-input: #0d1117;
+  --cor-borda: #374151;
+  --cor-texto: #ffffff;
+  --cor-texto-suave: #9ca3af;
+  --cor-texto-muted: #6b7280;
+  --cor-header: #0d1117;
+  --cor-placeholder: #6b7280;
+}
+
+:root.light {
+  --cor-fundo: #f3f4f6;
+  --cor-card: #ffffff;
+  --cor-input: #f9fafb;
+  --cor-borda: #e5e7eb;
+  --cor-texto: #111827;
+  --cor-texto-suave: #4b5563;
+  --cor-texto-muted: #6b7280;
+  --cor-header: #ffffff;
+  --cor-placeholder: #9ca3af;
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: var(--cor-placeholder);
+  transition: color 0.3s;
+}

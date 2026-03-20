@@ -1,73 +1,126 @@
-# React + TypeScript + Vite
+# Mini Twitter 
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Projeto desenvolvido para o processo seletivo de Estagio Desenvolvedor Front-end da **B2Bit**.
 
-Currently, two official plugins are available:
+##  Sobre o Projeto
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+Mini rede social onde usuários podem criar posts, curtir, editar e interagir com outros usuários. O projeto consome uma API REST com autenticação JWT.
 
-## React Compiler
+O backend foi disponibilizado pela **B2Bit** via Docker e já vem populado com dados iniciais. Após subir o container, a API estará disponível em `http://localhost:3000` e a documentação interativa pode ser acessada em `http://localhost:3000/swagger`.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+##  Tecnologias Utilizadas
 
-## Expanding the ESLint configuration
+- **React** — biblioteca principal para construção da interface
+- **TypeScript** — tipagem estática
+- **Vite** — bundler e servidor de desenvolvimento
+- **Tailwind CSS** — estilização
+- **Axios** — requisições HTTP
+- **TanStack Query** — gerenciamento de estado assíncrono e cache
+- **React Hook Form** — gerenciamento de formulários
+- **Zod** — validação de dados
+- **React Router DOM** — navegação entre páginas
+- **Context API** — estado global (autenticação e tema)
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+##  Funcionalidades
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+- Cadastro e login de usuários
+- Logout com invalidação do token JWT
+- Feed de posts com paginação
+- Busca de posts por título
+- Criação de posts com imagem (validação de até 5MB)
+- Edição e exclusão dos próprios posts
+- Curtir e descurtir posts com feedback visual
+- Modo dark/light
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+##  Pré-requisitos
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+Antes de começar, você precisará ter instalado:
+
+- [Node.js](https://nodejs.org/) — versão **22** ou superior
+
+Verifique as versões instaladas:
+```bash
+node -v
+npm -v
+
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+##  Como rodar o projeto
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+### 1. Clone o repositório
+```bash
+git clone https://github.com/seu-usuario/mini-twitter.git
+cd mini-twitter
+```
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+### 2. Instale as dependências
+```bash
+npm install
+```
+
+### 3. Suba o backend com Docker
+
+Clone o repositório do backend e suba o container:
+```bash
+docker-compose up -d
+```
+
+Popular o banco de dados com dados iniciais:
+```bash
+docker-compose exec api bun run seed
+```
+
+A API estará disponível em `http://localhost:3000`.
+
+### 4. Rode o frontend
+na Pasta raiz projeto abra o terminal e digite: 
+```bash
+npm run dev
+```
+
+Acesse `http://localhost:5173` no navegador.
+
+##  Usuários de Teste
+
+| Nome | E-mail | Senha |
+|------|--------|-------|
+| Alice Silva | alice@example.com | password123 |
+| Bob Santos | bob@example.com | password123 |
+| Charlie Oliveira | charlie@example.com | password123 |
+
+##  Estrutura do Projeto
+```
+src/
+├── components/
+│   ├── feed/
+│   │   ├── CardPost.tsx
+│   │   ├── FormularioCriarPost.tsx
+│   │   └── Paginacao.tsx
+│   └── layout/
+│       ├── BotaoTema.tsx
+│       ├── Header.tsx
+│       └── Footer.tsx
+├── ContextAPI/
+│   ├── ContextoLogado.tsx
+│   └── ContextoTema.tsx
+├── hooks/
+│   ├── useBusca.ts
+│   ├── useCardPost.ts
+│   └── usePosts.ts
+├── pages/
+│   ├── FeedMiniTwitter.tsx
+│   └── TelaAcesso.tsx
+├── services/
+│   ├── api.ts
+│   ├── autenticacao.ts
+│   └── posts.ts
+└── types/
+    └── tipos.ts
+```
+
+## 🔑 Variáveis de Ambiente
+
+O projeto não requer variáveis de ambiente. A URL da API está configurada em `src/services/api.ts`:
+```
+http://localhost:3000
 ```
