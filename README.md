@@ -49,8 +49,8 @@ npm -v
 
 ### 1. Clone o repositório
 ```bash
-git clone https://github.com/seu-usuario/mini-twitter.git
-cd mini-twitter
+git clone https://github.com/manuelfagundes77/ProjetoFrontEndB2
+
 ```
 
 ### 2. Instale as dependências
