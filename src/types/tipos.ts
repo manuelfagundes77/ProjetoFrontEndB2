@@ -1,6 +1,5 @@
 
-
-// Usuário autenticado
+// UsuArio autenticado
 // POST http://localhost:3000/auth/login
 // POST http://localhost:3000/auth/register
 export interface Usuario {

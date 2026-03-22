@@ -38,6 +38,6 @@ export function ProvedorTema({ children }: { children: React.ReactNode }) {
 // eslint-disable-next-line react-refresh/only-export-components
 export function useContextoTema() {
   const contexto = useContext(ContextoTema)
-  if (!contexto) throw new Error('useContextoTema deve ser usado dentro do ProvedorTema')
+  if (!contexto) throw new Error('useContextoTema')
   return contexto
 }
